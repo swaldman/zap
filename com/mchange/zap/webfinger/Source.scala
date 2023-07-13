@@ -6,25 +6,25 @@ object Source:
   private val DummyRecordText =
     """
     {
-      "subject": "acct:interfluidity@test.zap.mchange.com",
+      "subject": "acct:interfluidity@econtwitter.net",
       "aliases": [
-        "https://test.zap.mchange.com/@interfluidity",
-        "https://test.zap.mchange.com/users/interfluidity"
+        "https://econtwitter.net/@interfluidity",
+        "https://econtwitter.net/users/interfluidity"
       ],
       "links": [
         {
           "rel": "http://webfinger.net/rel/profile-page",
           "type": "text/html",
-          "href": "https://test.zap.mchange.com/@interfluidity"
+          "href": "https://econtwitter.net/@interfluidity"
         },
         {
           "rel": "self",
           "type": "application/activity+json",
-          "href": "https://test.zap.mchange.com/users/interfluidity"
+          "href": "https://econtwitter.net/users/interfluidity"
         },
         {
           "rel": "http://ostatus.org/schema/1.0/subscribe",
-          "template": "https://test.zap.mchange.com/authorize_interaction?uri={uri}"
+          "template": "https://econtwitter.net/authorize_interaction?uri={uri}"
         }
       ]
     }""".trim
@@ -33,7 +33,8 @@ object Source:
     def recordForAccount( account : String ) : Task[Option[ujson.Obj]] = ZIO.attempt:
       account match
         case "interfluidity@test.zap.mchange.com" => Some(DummyRecord)
-        case _                                    => None 
+        case "interfluidity@econtwitter.net"      => Some(DummyRecord)
+        case _                                    => None
 
 trait Source:
   def recordForAccount( account : String ) : Task[Option[ujson.Obj]]
