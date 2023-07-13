@@ -4,7 +4,7 @@ import zio.{Task,ZIO}
 import upickle.default.{ReadWriter, macroRW}
 
 object Source:
-  private val DummyRecordText =
+  val DummyRecordText =
     """
     {
       "subject": "acct:interfluidity@econtwitter.net",
@@ -29,14 +29,14 @@ object Source:
         }
       ]
     }""".trim
-  private val DummyRecord = upickle.default.read[Jrd](DummyRecordText)
+  private lazy val DummyRecord = upickle.default.read[Jrd](DummyRecordText)
   val Dummy = new Source:
-    def recordForAccount( account : String ) : Task[Option[Jrd]] = ZIO.attempt:
-      println(s"Checking account '${account}'.")
-      account match
-        case "interfluidity@test.zap.mchange.com" => Some(DummyRecord)
-        case "interfluidity@econtwitter.net"      => Some(DummyRecord)
-        case _                                    => None
+    def recordForAccount( account : String ) : Task[Option[Jrd]] =
+      ZIO.attempt:
+        account match
+          case "interfluidity@test.zap.mchange.com" => Some(DummyRecord)
+          case "interfluidity@econtwitter.net"      => Some(DummyRecord)
+          case _                                    => None
 
 trait Source:
   def recordForAccount( account : String ) : Task[Option[Jrd]]

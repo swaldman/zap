@@ -27,16 +27,16 @@ object Main extends ZIOAppDefault:
         .out( header("Content-Type", "application/jrd+json") )
         .errorOut(statusCode(StatusCode.NotFound).and(stringBody))
     val logic : String => ZIO[Any,String,String] = resource =>
-      println("Beginning logic...")
       val baseLogic =
         if resource.startsWith(AcctPrefix) then
-          webfinger.Source.Dummy.recordForAccount(resource.drop(AcctPrefixLen)).debug
+          val acctName = resource.drop(AcctPrefixLen)
+          webfinger.Source.Dummy.recordForAccount(acctName)
         else
-          ZIO.succeed(None : Option[Jrd]).debug
+          ZIO.succeed(None : Option[Jrd])
       baseLogic.orDie.flatMap:
         case Some(jrd) => ZIO.succeed(upickle.default.write(jrd))
         case None      => ZIO.fail(s"Resource '${resource}' not found.")
-    val webfingerServerEndpoint = webFingerEndpoint.zServerLogic[Any](logic.andThen( _.debug))
+    val webfingerServerEndpoint = webFingerEndpoint.zServerLogic[Any](logic)
     val httpApp = ZioHttpInterpreter().toHttp(webfingerServerEndpoint)
     val serve =
       Server
