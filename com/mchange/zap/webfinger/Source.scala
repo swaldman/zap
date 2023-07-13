@@ -1,6 +1,7 @@
 package com.mchange.zap.webfinger
 
 import zio.{Task,ZIO}
+import upickle.default.{ReadWriter, macroRW}
 
 object Source:
   private val DummyRecordText =
@@ -28,14 +29,15 @@ object Source:
         }
       ]
     }""".trim
-  private val DummyRecord = ujson.read(DummyRecordText).asInstanceOf[ujson.Obj]
+  private val DummyRecord = upickle.default.read[Jrd](DummyRecordText)
   val Dummy = new Source:
-    def recordForAccount( account : String ) : Task[Option[ujson.Obj]] = ZIO.attempt:
+    def recordForAccount( account : String ) : Task[Option[Jrd]] = ZIO.attempt:
+      println(s"Checking account '${account}'.")
       account match
         case "interfluidity@test.zap.mchange.com" => Some(DummyRecord)
         case "interfluidity@econtwitter.net"      => Some(DummyRecord)
         case _                                    => None
 
 trait Source:
-  def recordForAccount( account : String ) : Task[Option[ujson.Obj]]
+  def recordForAccount( account : String ) : Task[Option[Jrd]]
 
