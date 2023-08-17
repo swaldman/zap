@@ -1,7 +1,7 @@
 package com.mchange.zap.webfinger
 
 import zio.{Task,ZIO}
-import upickle.default.{ReadWriter, macroRW}
+import com.github.plokhotnyuk.jsoniter_scala.core.*
 
 object Source:
   val DummyRecordText =
@@ -29,7 +29,7 @@ object Source:
         }
       ]
     }""".trim
-  private lazy val DummyRecord = upickle.default.read[Jrd](DummyRecordText)
+  private lazy val DummyRecord = readFromString[Jrd](DummyRecordText)
   val Dummy = new Source:
     def recordForAccount( account : String ) : Task[Option[Jrd]] =
       ZIO.attempt:

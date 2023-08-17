@@ -5,8 +5,10 @@ import com.mchange.zap.webfinger.Jrd
 import sttp.model.StatusCode
 import sttp.tapir.{Endpoint,EndpointOutput}
 import sttp.tapir.ztapir.*
-import sttp.tapir.json.upickle.*
+import sttp.tapir.json.jsoniter.*
 import sttp.tapir.generic.auto.*
+
+import com.github.plokhotnyuk.jsoniter_scala.core.*
 
 import zio.*
 import zio.http.{Http, HttpApp, Request, Response, Server}
@@ -34,7 +36,7 @@ object Main extends ZIOAppDefault:
         else
           ZIO.succeed(None : Option[Jrd])
       baseLogic.orDie.flatMap:
-        case Some(jrd) => ZIO.succeed(upickle.default.write(jrd))
+        case Some(jrd) => ZIO.succeed(writeToString(jrd))
         case None      => ZIO.fail(s"Resource '${resource}' not found.")
     val webfingerServerEndpoint = webFingerEndpoint.zServerLogic[Any](logic)
     val httpApp = ZioHttpInterpreter().toHttp(webfingerServerEndpoint)
